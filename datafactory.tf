@@ -83,14 +83,16 @@ resource "azurerm_private_endpoint" "curated" {
 
   private_dns_zone_group {
     name                 = "privatelink-database-windows-net-${terraform.workspace}"
-    private_dns_zone_ids = [azurerm_private_dns_zone.curated.id]
+    private_dns_zone_ids = [data.azurerm_private_dns_zone.curated.id]
   }
 }
 
-resource "azurerm_private_dns_zone" "curated" {
+data "azurerm_private_dns_zone" "curated" {
   name                 = "privatelink.database.windows.net"
-  resource_group_name = azurerm_resource_group.rg_network.name
+  resource_group_name  = local.uks_shared_services_dns_resourcegroup[terraform.workspace]
+  provider             = azurerm.shared_services_uks
 }
+
 
 #######################################
 ### Linked services to data factory ###
@@ -145,7 +147,3 @@ resource "azurerm_data_factory_linked_custom_service" "replica" {
                     "type": "LinkedServiceReference"
                 },
                 "type": "AzureKeyVaultSecret"
-            }    
-    }
-    JSON
-}  
