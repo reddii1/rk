@@ -1,25 +1,16 @@
-#############################
-### SHIR for data factory ###
-#############################
 
-resource "azurerm_network_interface" "shir" {
-  count = length(local.cpenvprefix[terraform.workspace])
-  name                = "nic-shir-adf-${local.location_prefix}-${local.cpenvprefix[terraform.workspace][count.index]}${terraform.workspace}-${var.pdu}"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.powerbi-integration.name
-  ip_configuration {
-    name                          = "shir"
-    subnet_id                     = azurerm_subnet.fe02[0].id
-    private_ip_address_allocation = "Dynamic"
-  }
-
-  tags = merge(var.tags, local.tags)
+// this random var is just so that things can be built and destroyed without residual namespace errors. This can be removed later.
+resource "random_string" "random" {
+    length = 8
+    special = false
 }
 
-
+##############################
+### storage for SHIR script ###
+###############################
 # a new storage account, this could be changed to a pre-existing one
 
-resource "azurerm_storage_account" "shir_storage" {
+resource "azurerm_storage_account" "shir" {
   name                     = "struks${terraform.workspace}dccnvshir"
   resource_group_name = azurerm_resource_group.powerbi-integration.name
   location                 = var.location
@@ -42,13 +33,13 @@ resource "azurerm_storage_account" "shir_storage" {
 # new storage container 
 resource "azurerm_storage_container" "shir" {
   name                 = "powerbi-shir"
-  storage_account_name = azurerm_storage_account.shir_storage.name
+  storage_account_name = azurerm_storage_account.shir.name
 }
 
 # blob for the powershell file to go. This is for the VM to pull from 
-resource "azurerm_storage_blob" "shir_script" {
+resource "azurerm_storage_blob" "shir" {
   name                   = "adf-shir.ps1"
-  storage_account_name   = azurerm_storage_account.shir_storage.name
+  storage_account_name   = azurerm_storage_account.shir.name
   storage_container_name = azurerm_storage_container.shir.name
   type                   = "Block"
   access_tier            = "Cool"
@@ -56,33 +47,34 @@ resource "azurerm_storage_blob" "shir_script" {
 }
 
 
+#########################
+### variables for VM ###
+########################
 
-
-resource "random_string" "random" {
-    length = 8
-    special = false
-}
-
-resource "random_password" "shir_admin_password" {
+resource "random_password" "shir" {
   count = length(local.cpenvprefix[terraform.workspace])
 
   length           = 32
   special          = false
 }
 
-resource "azurerm_key_vault_secret" "shir_admin_password" {
+resource "azurerm_key_vault_secret" "shir" {
   count = length(local.cpenvprefix[terraform.workspace])
 
   name         = "shir-${local.cpenvprefix[terraform.workspace][count.index]}password"
-  value        = random_password.shir_admin_password[count.index].result
+  value        = random_password.shir[count.index].result
   key_vault_id = azurerm_key_vault.app.id
 }
 
+#################
+### VM setup ###
+################
+
 // this vm has to be windows since SHIR only supports it
-resource "azurerm_virtual_machine" "shir_vm" {
+resource "azurerm_virtual_machine" "shir" {
   count = length(local.cpenvprefix[terraform.workspace])
   // The prefix "uksucc" is important for internal naming policies
-  name                = "uksuccshir-${local.location_prefix}-${local.cpenvprefix[terraform.workspace][count.index]}${terraform.workspace}-${var.pdu}-${random_string.random.result}"
+  name                = "uksuccshir-${local.cpenvprefix[terraform.workspace][count.index]}${random_string.random.result}"
   resource_group_name = azurerm_resource_group.powerbi-integration.name
   location            = var.location
   
@@ -102,7 +94,7 @@ resource "azurerm_virtual_machine" "shir_vm" {
 // Message="Changing property 'windowsConfiguration.provisionVMAgent' is not allowed."
 // to fix this error just delete stuff manually. Apparently this is fixed in 2.0 but we're outdated. 
   storage_os_disk {
-    name              = "osDiskShir-${local.location_prefix}-${local.cpenvprefix[terraform.workspace][count.index]}${terraform.workspace}-${var.pdu}-${random_string.random.result}"
+    name              = "osDiskShir-${local.cpenvprefix[terraform.workspace][count.index]}${random_string.random.result}"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
@@ -111,7 +103,7 @@ resource "azurerm_virtual_machine" "shir_vm" {
     computer_name  = "hostname"
     admin_username = "testadmin"
     // This MUST be randomised and stored in kv eventually
-    admin_password = random_password.shir_admin_password[count.index].result
+    admin_password = random_password.shir[count.index].result
   }
 
   os_profile_windows_config {
@@ -125,31 +117,49 @@ resource "azurerm_virtual_machine" "shir_vm" {
 
 }
 
+// this NIC is to be associated within the Fe02 Subnet as this is where MySQL has exposure and where tableau currently connects from
+
+resource "azurerm_network_interface" "shir" {
+  count = length(local.cpenvprefix[terraform.workspace])
+  name                = "nic-shir-${local.cpenvprefix[terraform.workspace][count.index]}mi"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.powerbi-integration.name
+  ip_configuration {
+    name                          = "shir"
+    subnet_id                     = azurerm_subnet.fe02[0].id
+    private_ip_address_allocation = "Dynamic"
+  }
+
+  tags = merge(var.tags, local.tags)
+}
+
 resource "time_sleep" "wait_120_seconds" {
-  depends_on = [ azurerm_virtual_machine.shir_vm]
+  depends_on = [ azurerm_virtual_machine.shir]
   create_duration = "120s"
 }
 
 #VM Custom Script Extension to download and install the powershell script to activate SHIR to connect to ADF
-resource "azurerm_virtual_machine_extension" "vmextension" {
+resource "azurerm_virtual_machine_extension" "shir" {
   count = length(local.cpenvprefix[terraform.workspace])
   name                       = "shir-installation"
-  virtual_machine_id         = azurerm_virtual_machine.shir_vm[count.index].id
+  virtual_machine_id         = azurerm_virtual_machine.shir[count.index].id
   publisher                  = "Microsoft.Compute"
   type                       = "CustomScriptExtension"
   type_handler_version       = "1.10"
   auto_upgrade_minor_version = true
   depends_on = [ time_sleep.wait_120_seconds ]
-
+ // this is just associating the SHIR within the 
   protected_settings = <<PROTECTED_SETTINGS
       {
-          "fileUris": ["${format("https://%s.blob.core.windows.net/%s/%s", azurerm_storage_account.shir_storage.name, azurerm_storage_container.shir.name, azurerm_storage_blob.shir_script.name)}"],
-          "commandToExecute": "${join(" ", ["powershell.exe -ExecutionPolicy Unrestricted -File",azurerm_storage_blob.shir_script.name,"-gatewayKey ${azurerm_data_factory_integration_runtime_self_hosted.shir[count.index].primary_authorization_key}"])}",
-          "storageAccountName": "${azurerm_storage_account.shir_storage.name}",
-          "storageAccountKey": "${azurerm_storage_account.shir_storage.primary_access_key}"
+          "fileUris": ["${format("https://%s.blob.core.windows.net/%s/%s", azurerm_storage_account.shir.name, azurerm_storage_container.shir.name, azurerm_storage_blob.shir.name)}"],
+          "commandToExecute": "${join(" ", ["powershell.exe -ExecutionPolicy Unrestricted -File",azurerm_storage_blob.shir.name,"-gatewayKey ${azurerm_data_factory_integration_runtime_self_hosted.shir[count.index].primary_authorization_key}"])}",
+          "storageAccountName": "${azurerm_storage_account.shir.name}",
+          "storageAccountKey": "${azurerm_storage_account.shir.primary_access_key}"
       }
   PROTECTED_SETTINGS
 
   
 
 }
+
+
