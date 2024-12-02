@@ -73,7 +73,7 @@ resource "azurerm_data_factory_linked_custom_service" "replica" {
   type                 = "AzureMySql"
   type_properties_json = <<JSON
     {
-      "connectionString": "server=${azurerm_mysql_flexible_server.replica[count.index].fqdn};port=3306;database=mysql;uid=${azurerm_mysql_flexible_server.replica[count.index].administrator_login};sslmode=1;usesystemtruststore=0",
+      "connectionString": "server=${azurerm_mysql_flexible_server.replica[count.index].fqdn};port=3306;database=diamant;uid=${azurerm_mysql_flexible_server.replica[count.index].administrator_login};sslmode=1;usesystemtruststore=0",
       "password": {
                 "secretName": "${azurerm_key_vault_secret.mysql_admin_password[count.index].name}",
                 "store": {
