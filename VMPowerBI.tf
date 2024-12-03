@@ -7,8 +7,22 @@ resource "random_string" "random" {
 #################
 ### VM Setup ###
 #################
+resource "random_password" "pbi" {
+  count = length(local.cpenvprefix[terraform.workspace])
 
-resource "azurerm_resource_group" "powerbi-integration" {
+  length           = 32
+  special          = false
+}
+
+resource "azurerm_key_vault_secret" "pbi" {
+  count = length(local.cpenvprefix[terraform.workspace])
+
+  name         = "pbi-${local.cpenvprefix[terraform.workspace][count.index]}password"
+  value        = random_password.pbi[count.index].result
+  key_vault_id = azurerm_key_vault.app.id
+}
+
+resource "azurerm_resource_group" "pbi" {
   name     = "rg-${local.location_prefix}-${terraform.workspace}-${var.pdu}-pbi"
   location = var.location
   tags     = merge(var.tags, local.tags)
@@ -16,7 +30,7 @@ resource "azurerm_resource_group" "powerbi-integration" {
 
 resource "azurerm_virtual_machine" "pbi" {
     name                = "vm-pbi-${random_string.random.result}"
-    resource_group_name = azurerm_resource_group.powerbi-integration.name
+    resource_group_name = azurerm_resource_group.pbi.name
     location            = var.location
     network_interface_ids = [
         azurerm_network_interface.pbi.id
@@ -53,17 +67,11 @@ resource "azurerm_virtual_machine" "pbi" {
     }
 }
 
-// Generate a secure password for the admin user
-resource "random_password" "pbi" {
-    length  = 32
-    special = false
-}
-
 // Network Interface
 resource "azurerm_network_interface" "pbi" {
     name                = "nic-pbi-${random_string.random.result}"
     location            = var.location
-    resource_group_name = azurerm_resource_group.powerbi-integration.name
+    resource_group_name = azurerm_resource_group.pbi.name
 
     ip_configuration {
         name                          = "ipconfig1"
