@@ -8,6 +8,12 @@ resource "random_string" "random" {
 ### VM Setup ###
 #################
 
+resource "azurerm_resource_group" "powerbi-integration" {
+  name     = "rg-${local.location_prefix}-${terraform.workspace}-${var.pdu}-pbi"
+  location = var.location
+  tags     = merge(var.tags, local.tags)
+}
+
 resource "azurerm_virtual_machine" "pbi" {
     name                = "vm-pbi-${random_string.random.result}"
     resource_group_name = azurerm_resource_group.powerbi-integration.name
@@ -15,20 +21,18 @@ resource "azurerm_virtual_machine" "pbi" {
     network_interface_ids = [
         azurerm_network_interface.pbi.id
     ]
-    vm_size               = "Standard_DS1_v2"
-    delete_os_disk_on_termination = true
-    delete_data_disks_on_termination = true
+    size                = "Standard_DS1_v2" // Updated to `size`, replacing `vm_size`
 
     // Using a shared image for the VM OS
-    storage_image_reference {
+    source_image_reference {
         id = data.azurerm_shared_image_version.win2019_latestGoldImage.id
     }
 
-    storage_os_disk {
+    os_disk {
         name              = "osDiskpbi-${random_string.random.result}"
         caching           = "ReadWrite"
+        storage_account_type = "Standard_LRS"
         create_option     = "FromImage"
-        managed_disk_type = "Standard_LRS"
     }
 
     os_profile {
@@ -38,8 +42,7 @@ resource "azurerm_virtual_machine" "pbi" {
     }
 
     os_profile_windows_config {
-        provision_vm_agent       = true
-        enable_automatic_upgrades = false
+        enable_automatic_updates = false // Updated to `enable_automatic_updates`, replacing `enable_automatic_upgrades`
     }
 
     identity {
