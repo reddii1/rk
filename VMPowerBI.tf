@@ -1,31 +1,37 @@
-// Generate a random string for resource uniqueness
-resource "random_string" "random" {
-  length  = 8
-  special = false
-}
-
 #################
 ### VM Setup ###
 #################
-resource "random_password" "pbi" {
+
+resource "random_password" "pbi_password" {
+  count   = length(local.cpenvprefix[terraform.workspace])
   length  = 32
   special = false
 }
 
-resource "azurerm_key_vault_secret" "pbi" {
-  name         = "pbi-password"
-  value        = random_password.pbi.result
+resource "azurerm_key_vault_secret" "pbi_password" {
+  count        = length(local.cpenvprefix[terraform.workspace])
+  name         = "adf-sql-${local.cpenvprefix[terraform.workspace][count.index]}password"
+  value        = random_password.pbi_password[count.index].result
   key_vault_id = azurerm_key_vault.app.id
 }
 
+// Random string for naming (lowercase as per naming policies)
+resource "random_string" "random_lower" {
+  length  = 8
+  special = false
+  upper   = false
+}
+
+// Resource group for the VM
 resource "azurerm_resource_group" "pbi" {
   name     = "rg-${local.location_prefix}-${terraform.workspace}-${var.pdu}-pbi"
   location = var.location
   tags     = merge(var.tags, local.tags)
 }
 
+// Virtual Machine
 resource "azurerm_virtual_machine" "pbi" {
-  name                = "vm-pbi-${random_string.random.result}"
+  name                = "vm-pbi-${random_string.random_lower.result}"
   resource_group_name = azurerm_resource_group.pbi.name
   location            = var.location
   network_interface_ids = [
@@ -40,7 +46,7 @@ resource "azurerm_virtual_machine" "pbi" {
   }
 
   storage_os_disk {
-    name              = "osDiskpbi-${random_string.random.result}"
+    name              = "osDiskpbi-${random_string.random_lower.result}"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
@@ -49,7 +55,7 @@ resource "azurerm_virtual_machine" "pbi" {
   os_profile {
     computer_name  = "pbi-vm"
     admin_username = "adminuser"
-    admin_password = random_password.pbi.result
+    admin_password = random_password.pbi_password[0].result
   }
 
   os_profile_windows_config {
@@ -64,7 +70,7 @@ resource "azurerm_virtual_machine" "pbi" {
 
 // Network Interface
 resource "azurerm_network_interface" "pbi" {
-  name                = "nic-pbi-${random_string.random.result}"
+  name                = "nic-pbi-${random_string.random_lower.result}"
   location            = var.location
   resource_group_name = azurerm_resource_group.pbi.name
 
