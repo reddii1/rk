@@ -1,3 +1,8 @@
+resource "azurerm_resource_group" "powerbi-integration" {
+  name     = "rg-${local.location_prefix}-${terraform.workspace}-${var.pdu}-powerbi-mi"
+  location = var.location
+  tags     = merge(var.tags, local.tags)
+}
 resource "random_password" "pbisvc" {
   length           = 32
   special          = false
