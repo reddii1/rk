@@ -1,0 +1,123 @@
+2024-12-10T17:31:19.9882682Z Archive:  terraform_1.3.5_linux_amd64.zip
+2024-12-10T17:31:20.5673181Z   inflating: terraform_1.3.5/terraform  
+2024-12-10T17:31:20.5883476Z Finished installing Terraform.....
+2024-12-10T17:31:20.5884310Z Running terraform...
+2024-12-10T17:31:21.2087731Z DC-CNV-TEST
+2024-12-10T17:31:21.2088504Z d3149529-33df-4c0a-8959-ce626c696a02
+2024-12-10T17:31:23.2407802Z Reading package lists...
+2024-12-10T17:31:23.4984226Z Building dependency tree...
+2024-12-10T17:31:23.5010469Z Reading state information...
+2024-12-10T17:31:23.6786368Z jq is already the newest version (1.6-2.1ubuntu3).
+2024-12-10T17:31:23.6789151Z 0 upgraded, 0 newly installed, 0 to remove and 33 not upgraded.
+2024-12-10T17:31:23.8524930Z 
+2024-12-10T17:31:23.8529647Z [0m[1mInitializing the backend...[0m
+2024-12-10T17:31:24.3045420Z [0m[32m
+2024-12-10T17:31:24.3061149Z Successfully configured the backend "azurerm"! Terraform will automatically
+2024-12-10T17:31:24.3062409Z use this backend unless the backend configuration changes.[0m
+2024-12-10T17:31:24.4252425Z 
+2024-12-10T17:31:24.4253521Z [0m[1mInitializing provider plugins...[0m
+2024-12-10T17:31:24.4253899Z - Finding hashicorp/tls versions matching "3.2.1"...
+2024-12-10T17:31:24.4824185Z - Finding hashicorp/azurerm versions matching "3.80.0"...
+2024-12-10T17:31:24.5090958Z - Finding latest version of hashicorp/time...
+2024-12-10T17:31:24.5271644Z - Finding hashicorp/null versions matching "3.1.1"...
+2024-12-10T17:31:24.5487716Z - Finding azure/azapi versions matching "1.10.0"...
+2024-12-10T17:31:24.5678475Z - Finding hashicorp/random versions matching "3.1.3"...
+2024-12-10T17:31:24.5912501Z - Finding microsoft/azuredevops versions matching "0.2.2"...
+2024-12-10T17:31:24.6081995Z - Finding hashicorp/template versions matching "2.2.0"...
+2024-12-10T17:31:24.6343669Z - Finding latest version of hashicorp/external...
+2024-12-10T17:31:24.6552387Z - Finding hashicorp/azuread versions matching "1.6.0"...
+2024-12-10T17:31:24.7257895Z - Installing hashicorp/azuread v1.6.0...
+2024-12-10T17:31:25.1163169Z - Installed hashicorp/azuread v1.6.0 (signed by HashiCorp)
+2024-12-10T17:31:25.1656496Z - Installing hashicorp/tls v3.2.1...
+2024-12-10T17:31:25.4183443Z - Installed hashicorp/tls v3.2.1 (signed by HashiCorp)
+2024-12-10T17:31:26.4102582Z - Installing azure/azapi v1.10.0...
+2024-12-10T17:31:28.1535446Z - Installed azure/azapi v1.10.0 (signed by a HashiCorp partner, key ID [0m[1m6F0B91BDE98478CF[0m[0m)
+2024-12-10T17:31:28.2007395Z - Installing hashicorp/random v3.1.3...
+2024-12-10T17:31:28.4652058Z - Installed hashicorp/random v3.1.3 (signed by HashiCorp)
+2024-12-10T17:31:29.4917909Z - Installing microsoft/azuredevops v0.2.2...
+2024-12-10T17:31:30.3156838Z - Installed microsoft/azuredevops v0.2.2 (signed by a HashiCorp partner, key ID [0m[1m6F0B91BDE98478CF[0m[0m)
+2024-12-10T17:31:30.3753919Z - Installing hashicorp/template v2.2.0...
+2024-12-10T17:31:30.7329652Z - Installed hashicorp/template v2.2.0 (signed by HashiCorp)
+2024-12-10T17:31:30.7765594Z - Installing hashicorp/azurerm v3.80.0...
+2024-12-10T17:31:33.7139098Z - Installed hashicorp/azurerm v3.80.0 (signed by HashiCorp)
+2024-12-10T17:31:33.7557037Z - Installing hashicorp/time v0.12.1...
+2024-12-10T17:31:34.0550619Z - Installed hashicorp/time v0.12.1 (signed by HashiCorp)
+2024-12-10T17:31:34.0963199Z - Installing hashicorp/null v3.1.1...
+2024-12-10T17:31:34.3628306Z - Installed hashicorp/null v3.1.1 (signed by HashiCorp)
+2024-12-10T17:31:34.4071325Z - Installing hashicorp/external v2.3.4...
+2024-12-10T17:31:34.6795210Z - Installed hashicorp/external v2.3.4 (signed by HashiCorp)
+2024-12-10T17:31:34.6795784Z 
+2024-12-10T17:31:34.6796327Z Partner and community providers are signed by their developers.
+2024-12-10T17:31:34.6796560Z If you'd like to know more about provider signing, you can read about it here:
+2024-12-10T17:31:34.6796767Z https://www.terraform.io/docs/cli/plugins/signing.html
+2024-12-10T17:31:34.6796887Z 
+2024-12-10T17:31:34.6797370Z Terraform has created a lock file [1m.terraform.lock.hcl[0m to record the provider
+2024-12-10T17:31:34.6797598Z selections it made above. Include this file in your version control repository
+2024-12-10T17:31:34.6797840Z so that Terraform can guarantee to make the same selections by default when
+2024-12-10T17:31:34.6798056Z you run "terraform init" in the future.[0m
+2024-12-10T17:31:34.6807335Z 
+2024-12-10T17:31:34.6837176Z [0m[1m[32mTerraform has been successfully initialized![0m[32m[0m
+2024-12-10T17:31:34.6837422Z [0m[32m
+2024-12-10T17:31:34.6837606Z You may now begin working with Terraform. Try running "terraform plan" to see
+2024-12-10T17:31:34.6838422Z any changes that are required for your infrastructure. All Terraform commands
+2024-12-10T17:31:34.6838714Z should now work.
+2024-12-10T17:31:34.6838791Z 
+2024-12-10T17:31:34.6838972Z If you ever set or change modules or backend configuration for Terraform,
+2024-12-10T17:31:34.6839434Z rerun this command to reinitialize your working directory. If you forget, other
+2024-12-10T17:31:34.6840396Z commands will detect it and remind you to do so if necessary.[0m
+2024-12-10T17:31:37.3138135Z [31mWorkspace "test" already exists[0m[0m
+2024-12-10T17:31:39.7288758Z [0m[32mSwitched to workspace "test".[0m
+2024-12-10T17:31:39.9211923Z 
+2024-12-10T17:31:39.9213077Z [0m[1mInitializing the backend...[0m
+2024-12-10T17:31:42.5424147Z 
+2024-12-10T17:31:42.5428473Z [0m[1mInitializing provider plugins...[0m
+2024-12-10T17:31:42.5428696Z - Finding latest version of hashicorp/time...
+2024-12-10T17:31:42.5842141Z - Finding hashicorp/azuread versions matching "1.6.0"...
+2024-12-10T17:31:42.6026186Z - Finding latest version of hashicorp/external...
+2024-12-10T17:31:42.6202707Z - Finding hashicorp/template versions matching "2.2.0"...
+2024-12-10T17:31:42.6408932Z - Finding hashicorp/null versions matching "3.1.1"...
+2024-12-10T17:31:42.6622835Z - Finding hashicorp/azurerm versions matching "3.80.0"...
+2024-12-10T17:31:42.6870922Z - Finding azure/azapi versions matching "1.10.0"...
+2024-12-10T17:31:42.7033273Z - Finding microsoft/azuredevops versions matching "0.2.2"...
+2024-12-10T17:31:42.7213804Z - Finding hashicorp/random versions matching "3.1.3"...
+2024-12-10T17:31:42.7399385Z - Finding hashicorp/tls versions matching "3.2.1"...
+2024-12-10T17:31:42.8104048Z - Using previously-installed hashicorp/random v3.1.3
+2024-12-10T17:31:42.8846681Z - Using previously-installed hashicorp/azuread v1.6.0
+2024-12-10T17:31:42.9295862Z - Using previously-installed hashicorp/external v2.3.4
+2024-12-10T17:31:42.9809870Z - Using previously-installed hashicorp/null v3.1.1
+2024-12-10T17:31:43.8865982Z - Using previously-installed hashicorp/azurerm v3.80.0
+2024-12-10T17:31:44.2848709Z - Using previously-installed azure/azapi v1.10.0
+2024-12-10T17:31:44.3355588Z - Using previously-installed hashicorp/time v0.12.1
+2024-12-10T17:31:44.3972020Z - Using previously-installed hashicorp/template v2.2.0
+2024-12-10T17:31:44.4543202Z - Using previously-installed microsoft/azuredevops v0.2.2
+2024-12-10T17:31:44.5023815Z - Using previously-installed hashicorp/tls v3.2.1
+2024-12-10T17:31:44.5024222Z 
+2024-12-10T17:31:44.5050611Z [0m[1m[32mTerraform has been successfully initialized![0m[32m[0m
+2024-12-10T17:31:44.5051170Z [0m[32m
+2024-12-10T17:31:44.5051686Z You may now begin working with Terraform. Try running "terraform plan" to see
+2024-12-10T17:31:44.5052120Z any changes that are required for your infrastructure. All Terraform commands
+2024-12-10T17:31:44.5053269Z should now work.
+2024-12-10T17:31:44.5053531Z 
+2024-12-10T17:31:44.5053914Z If you ever set or change modules or backend configuration for Terraform,
+2024-12-10T17:31:44.5054555Z rerun this command to reinitialize your working directory. If you forget, other
+2024-12-10T17:31:44.5054823Z commands will detect it and remind you to do so if necessary.[0m
+2024-12-10T17:31:44.5404934Z Terraform v1.3.5
+2024-12-10T17:31:44.5405215Z on linux_amd64
+2024-12-10T17:31:44.5405505Z + provider registry.terraform.io/azure/azapi v1.10.0
+2024-12-10T17:31:44.5405706Z + provider registry.terraform.io/hashicorp/azuread v1.6.0
+2024-12-10T17:31:44.5405915Z + provider registry.terraform.io/hashicorp/azurerm v3.80.0
+2024-12-10T17:31:44.5406099Z + provider registry.terraform.io/hashicorp/external v2.3.4
+2024-12-10T17:31:44.5406443Z + provider registry.terraform.io/hashicorp/null v3.1.1
+2024-12-10T17:31:44.5406617Z + provider registry.terraform.io/hashicorp/random v3.1.3
+2024-12-10T17:31:44.5406975Z + provider registry.terraform.io/hashicorp/template v2.2.0
+2024-12-10T17:31:44.5407155Z + provider registry.terraform.io/hashicorp/time v0.12.1
+2024-12-10T17:31:44.5408055Z + provider registry.terraform.io/hashicorp/tls v3.2.1
+2024-12-10T17:31:44.5408232Z + provider registry.terraform.io/microsoft/azuredevops v0.2.2
+2024-12-10T17:31:44.5408335Z 
+2024-12-10T17:31:44.5408494Z Your version of Terraform is out of date! The latest version
+2024-12-10T17:31:44.5408686Z is 1.10.1. You can update by downloading from https://www.terraform.io/downloads.html
+2024-12-10T17:31:44.5425827Z Validating Terraform
+2024-12-10T17:31:49.7607852Z Terraform deployment is valid
+2024-12-10T17:31:49.7608606Z Validating Terraform and producing tfplan...
+2024-12-10T17:31:49.7609472Z Creating plan file
+2024-12-10T17:31:49.7633363Z dc-cnv-network_101224_125857
